@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrintApp — Tu panel de impresión profesional</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --dark:#1a1a2e;
+    --teal:#2ec4b6;
+    --red:#e63946;
+    --gray:#6b7280;
+    --light:#f9fafb;
+    --border:#e5e7eb;
+    --radius:16px;
+  }
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#111;background:#fff;line-height:1.6}
+
+  /* ── HERO ── */
+  .hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 60%,#0f3460 100%);color:#fff;padding:80px 24px 100px;text-align:center;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 50%,rgba(46,196,182,.15),transparent 60%)}
+  .hero-badge{display:inline-block;background:rgba(46,196,182,.2);color:#2ec4b6;border:1px solid rgba(46,196,182,.4);border-radius:50px;padding:6px 18px;font-size:13px;font-weight:700;letter-spacing:.05em;margin-bottom:24px}
+  .hero h1{font-size:clamp(36px,6vw,64px);font-weight:900;line-height:1.1;margin-bottom:20px}
+  .hero h1 span{color:#2ec4b6}
+  .hero p{font-size:clamp(16px,2vw,20px);color:rgba(255,255,255,.75);max-width:560px;margin:0 auto 40px}
+  .hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .btn-primary{background:#2ec4b6;color:#fff;border:none;border-radius:12px;padding:16px 32px;font-size:16px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block;transition:.2s}
+  .btn-primary:hover{background:#26a69a;transform:translateY(-2px)}
+  .btn-secondary{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:12px;padding:16px 32px;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;transition:.2s}
+  .btn-secondary:hover{background:rgba(255,255,255,.2)}
+  .hero-screen{max-width:900px;margin:60px auto 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:24px;backdrop-filter:blur(10px)}
+  .mock-bar{display:flex;gap:8px;margin-bottom:16px}
+  .mock-dot{width:12px;height:12px;border-radius:50%}
+  .mock-ui{background:#f9fafb;border-radius:12px;padding:20px;display:grid;grid-template-columns:180px 1fr;gap:16px;min-height:300px}
+  .mock-sidebar{background:#1a1a2e;border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:8px}
+  .mock-logo{color:#fff;font-weight:900;font-size:14px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:4px}
+  .mock-logo span{color:#2ec4b6}
+  .mock-nav-item{background:rgba(255,255,255,.05);border-radius:8px;padding:10px 12px;color:rgba(255,255,255,.7);font-size:12px;display:flex;align-items:center;gap:8px}
+  .mock-nav-item.active{background:#2ec4b6;color:#fff}
+  .mock-nav-dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.6}
+  .mock-content{display:flex;flex-direction:column;gap:12px}
+  .mock-greeting{font-size:13px;color:#6b7280}
+  .mock-title{font-size:20px;font-weight:900;color:#1a1a2e}
+  .mock-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .mock-stat{background:#fff;border-radius:10px;padding:12px;text-align:center;border:1px solid #e5e7eb}
+  .mock-stat-num{font-size:22px;font-weight:900}
+  .mock-stat-lbl{font-size:10px;color:#6b7280;margin-top:2px}
+  .c1{color:#7c3aed}.c2{color:#f97316}.c3{color:#3b82f6}.c4{color:#22c55e}
+
+  /* ── BENEFITS ── */
+  .section{padding:80px 24px;max-width:1100px;margin:0 auto}
+  .section-label{font-size:13px;font-weight:700;color:#2ec4b6;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+  .section-title{font-size:clamp(28px,4vw,42px);font-weight:900;color:#1a1a2e;margin-bottom:16px;line-height:1.2}
+  .section-sub{font-size:17px;color:#6b7280;max-width:560px}
+  .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-top:48px}
+  .feature-card{background:#f9fafb;border-radius:var(--radius);padding:28px;border:1px solid var(--border);transition:.2s}
+  .feature-card:hover{border-color:#2ec4b6;box-shadow:0 8px 30px rgba(46,196,182,.1);transform:translateY(-3px)}
+  .feature-ic{font-size:36px;margin-bottom:16px}
+  .feature-title{font-size:18px;font-weight:800;color:#1a1a2e;margin-bottom:8px}
+  .feature-desc{font-size:15px;color:#6b7280;line-height:1.6}
+
+  /* ── SCREENS ── */
+  .screens-section{padding:80px 24px;background:#f9fafb}
+  .screens-inner{max-width:1100px;margin:0 auto}
+  .screens-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:32px;margin-top:48px}
+  .screen-card{background:#fff;border-radius:20px;overflow:hidden;border:1px solid var(--border);box-shadow:0 4px 20px rgba(0,0,0,.06)}
+  .screen-img{width:100%;display:block}
+  .screen-cap{padding:16px 20px}
+  .screen-cap-ttl{font-size:15px;font-weight:800;color:#1a1a2e;margin-bottom:4px}
+  .screen-cap-sub{font-size:13px;color:#6b7280}
+
+  /* ── HOW IT WORKS ── */
+  .how-section{background:#f9fafb;padding:80px 24px}
+  .how-inner{max-width:800px;margin:0 auto;text-align:center}
+  .steps{display:flex;flex-direction:column;gap:0;margin-top:48px;position:relative}
+  .steps::before{content:'';position:absolute;left:28px;top:28px;bottom:28px;width:2px;background:linear-gradient(to bottom,#2ec4b6,rgba(46,196,182,.1));z-index:0}
+  .step{display:flex;gap:20px;align-items:flex-start;background:#fff;border-radius:var(--radius);padding:24px;border:1px solid var(--border);margin-bottom:12px;position:relative;z-index:1;text-align:left}
+  .step-num{width:56px;height:56px;border-radius:50%;background:#1a1a2e;color:#2ec4b6;font-size:20px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .step-body{}
+  .step-title{font-size:17px;font-weight:800;color:#1a1a2e;margin-bottom:6px}
+  .step-desc{font-size:14px;color:#6b7280;line-height:1.6}
+  .step-tag{display:inline-block;background:#f0fdf4;color:#16a34a;border-radius:6px;padding:2px 10px;font-size:12px;font-weight:700;margin-top:8px}
+
+  /* ── PRICING ── */
+  .pricing-section{padding:80px 24px;text-align:center}
+  .pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;max-width:1000px;margin:48px auto 0}
+  .pricing-card{background:#1a1a2e;border-radius:24px;padding:36px;color:#fff;position:relative;overflow:hidden;text-align:left}
+  .pricing-card.featured{border:2px solid #2ec4b6}
+  .pricing-card::before{content:'';position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:rgba(46,196,182,.08)}
+  .pricing-badge{background:#2ec4b6;color:#fff;border-radius:50px;padding:5px 16px;font-size:12px;font-weight:800;display:inline-block;margin-bottom:20px}
+  .pricing-badge.alt{background:rgba(255,255,255,.15);color:rgba(255,255,255,.8)}
+  .pricing-name{font-size:16px;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:8px}
+  .pricing-price{font-size:48px;font-weight:900;margin-bottom:4px;line-height:1}
+  .pricing-price span{font-size:18px;font-weight:500;opacity:.5}
+  .pricing-sub{color:rgba(255,255,255,.5);font-size:13px;margin-bottom:24px}
+  .pricing-features{list-style:none;text-align:left;display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+  .pricing-features li{display:flex;align-items:center;gap:10px;font-size:14px;color:rgba(255,255,255,.8)}
+  .pricing-features li::before{content:'✓';color:#2ec4b6;font-weight:900;font-size:15px;flex-shrink:0}
+  .pricing-note{font-size:12px;color:rgba(255,255,255,.35);margin-top:14px;text-align:center}
+  .pricing-toggle{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:0}
+  .save-badge{background:#dcfce7;color:#16a34a;border-radius:50px;padding:3px 10px;font-size:12px;font-weight:700}
+
+  /* ── CTA ── */
+  .cta-section{background:linear-gradient(135deg,#2ec4b6,#26a69a);padding:80px 24px;text-align:center;color:#fff}
+  .cta-section h2{font-size:clamp(28px,4vw,42px);font-weight:900;margin-bottom:16px}
+  .cta-section p{font-size:18px;opacity:.9;margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto}
+  .btn-white{background:#fff;color:#1a1a2e;border:none;border-radius:12px;padding:16px 36px;font-size:16px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block;transition:.2s}
+  .btn-white:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+
+  /* ── FOOTER ── */
+  footer{background:#1a1a2e;color:rgba(255,255,255,.5);padding:32px 24px;text-align:center;font-size:14px}
+  footer strong{color:#2ec4b6}
+
+  @media(max-width:640px){
+    .mock-ui{grid-template-columns:1fr}
+    .mock-sidebar{display:none}
+    .steps::before{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">✦ Para negocios de impresión</div>
+  <h1>Tu negocio.<br><span>Bajo control.</span></h1>
+  <p>PrintApp es el panel de gestión diseñado para imprentas y negocios de impresión. Trabajos, clientes, pagos y Drive — todo en un solo lugar.</p>
+  <div class="hero-btns">
+    <a href="mailto:raulalvaradomendoza@gmail.com?subject=Quiero acceso a PrintApp" class="btn-primary">Quiero mi acceso →</a>
+    <a href="#como-funciona" class="btn-secondary">¿Cómo funciona?</a>
+  </div>
+
+  <div class="hero-screen">
+    <div class="mock-bar">
+      <div class="mock-dot" style="background:#ff5f57"></div>
+      <div class="mock-dot" style="background:#febc2e"></div>
+      <div class="mock-dot" style="background:#28c840"></div>
+    </div>
+    <div class="mock-ui">
+      <div class="mock-sidebar">
+        <div class="mock-logo">Tu <span>Negocio</span></div>
+        <div class="mock-nav-item active"><div class="mock-nav-dot"></div>Trabajos</div>
+        <div class="mock-nav-item"><div class="mock-nav-dot"></div>Pagos</div>
+        <div class="mock-nav-item"><div class="mock-nav-dot"></div>Clientes</div>
+        <div class="mock-nav-item"><div class="mock-nav-dot"></div>Ventas</div>
+        <div class="mock-nav-item"><div class="mock-nav-dot"></div>Pendientes</div>
+      </div>
+      <div class="mock-content">
+        <div>
+          <div class="mock-greeting">Hola, Carlos 👋</div>
+          <div class="mock-title">12 trabajos activos</div>
+        </div>
+        <div class="mock-stats">
+          <div class="mock-stat"><div class="mock-stat-num c1">3</div><div class="mock-stat-lbl">Nuevo</div></div>
+          <div class="mock-stat"><div class="mock-stat-num c2">5</div><div class="mock-stat-lbl">En Proceso</div></div>
+          <div class="mock-stat"><div class="mock-stat-num c3">2</div><div class="mock-stat-lbl">Revisión</div></div>
+          <div class="mock-stat"><div class="mock-stat-num c4">2</div><div class="mock-stat-lbl">Entregado</div></div>
+        </div>
+        <div style="background:#fff;border-radius:10px;padding:14px;border:1px solid #e5e7eb;font-size:13px;color:#374151">
+          <strong style="color:#1a1a2e">Todos los trabajos</strong>
+          <span style="float:right;background:#1a1a2e;color:#2ec4b6;border-radius:6px;padding:2px 10px;font-weight:700">12</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<div class="section">
+  <div class="section-label">Funcionalidades</div>
+  <div class="section-title">Todo lo que necesita<br>tu negocio de impresión</div>
+  <div class="section-sub">Diseñado para el día a día real de una imprenta. Sin complicaciones.</div>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-ic">📋</div>
+      <div class="feature-title">Gestión de trabajos</div>
+      <div class="feature-desc">Registra cada trabajo con descripción, cliente, precio, fecha de entrega y estado. Nuevo → En Proceso → Revisión → Entregado.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-ic">💰</div>
+      <div class="feature-title">Control de pagos</div>
+      <div class="feature-desc">Registra anticipos y abonos. Ve de un vistazo quién debe y cuánto. Separado en "Por cobrar" y "Pagados".</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-ic">👥</div>
+      <div class="feature-title">Base de clientes</div>
+      <div class="feature-desc">Directorio completo con nombre, empresa, WhatsApp y correo. Accede al historial de trabajos de cada cliente.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-ic">📊</div>
+      <div class="feature-title">Reportes de ventas</div>
+      <div class="feature-desc">Consulta tus ingresos por este mes, mes anterior o elige el período que quieras. Con detalle de facturado vs sin factura.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-ic">📁</div>
+      <div class="feature-title">Sincronización con Drive</div>
+      <div class="feature-desc">Conecta tu carpeta de Google Drive y sincroniza automáticamente los trabajos. Accede a los archivos desde el panel.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-ic">💬</div>
+      <div class="feature-title">Notifica a tu cliente por WhatsApp</div>
+      <div class="feature-desc">Mantén a tus clientes informados en todo momento. Con un toque envías una notificación directa a su WhatsApp cuando su trabajo está listo, en proceso o listo para recoger — sin salir del panel.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-ic">🧾</div>
+      <div class="feature-title">Remisión digital al instante</div>
+      <div class="feature-desc">Genera la remisión de cada trabajo y envíala por WhatsApp o correo electrónico a tu cliente. También puedes imprimirla directamente desde el panel. Sin papeles extra, sin retrasos.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-ic">📨</div>
+      <div class="feature-title">Solicita facturas a tu contador</div>
+      <div class="feature-desc">¿Tu cliente necesita factura? Selecciona el trabajo y envía todos los datos fiscales a tu contador por WhatsApp o correo electrónico — en segundos, sin errores.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-ic">🔔</div>
+      <div class="feature-title">Correos pendientes</div>
+      <div class="feature-desc">Ve en tiempo real los correos sin responder de tus clientes. Nunca más pierdas un pedido por correo.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-ic">📱</div>
+      <div class="feature-title">Móvil y escritorio</div>
+      <div class="feature-desc">Funciona perfecto en celular, tablet y computadora. Accede desde cualquier dispositivo con tu cuenta de Google.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-ic">🎨</div>
+      <div class="feature-title">Tu marca, tu panel</div>
+      <div class="feature-desc">Personaliza el panel con el nombre de tu negocio y tu logo. Se siente como una app propia.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREENS -->
+<div class="screens-section">
+  <div class="screens-inner">
+    <div class="section-label" style="text-align:center">Vista previa</div>
+    <div class="section-title" style="text-align:center">Así se ve en acción</div>
+    <div class="section-sub" style="text-align:center;margin:0 auto">Pantallas reales de la aplicación. Datos de ejemplo.</div>
+    <div class="screens-grid">
+      <div class="screen-card">
+        <img src="mockups/01_dashboard.png" class="screen-img" alt="Dashboard">
+        <div class="screen-cap">
+          <div class="screen-cap-ttl">Panel principal</div>
+          <div class="screen-cap-sub">Vista general de trabajos activos por estado, buscador y accesos rápidos.</div>
+        </div>
+      </div>
+      <div class="screen-card">
+        <img src="mockups/02_detalle.png" class="screen-img" alt="Detalle de trabajo">
+        <div class="screen-cap">
+          <div class="screen-cap-ttl">Detalle de trabajo</div>
+          <div class="screen-cap-sub">Remisión, pagos, Drive, WhatsApp, correo y factura — todo desde un solo lugar.</div>
+        </div>
+      </div>
+      <div class="screen-card">
+        <img src="mockups/03_pagos.png" class="screen-img" alt="Control de pagos">
+        <div class="screen-cap">
+          <div class="screen-cap-ttl">Control de pagos</div>
+          <div class="screen-cap-sub">Separado en "Por cobrar" y "Pagados". Ve saldos pendientes de un vistazo.</div>
+        </div>
+      </div>
+      <div class="screen-card">
+        <img src="mockups/04_ventas.png" class="screen-img" alt="Reporte de ventas">
+        <div class="screen-cap">
+          <div class="screen-cap-ttl">Reporte de ventas</div>
+          <div class="screen-cap-sub">Ingresos por mes con comparativa, desglose facturado vs sin factura y gráfica histórica.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="how-section" id="como-funciona">
+  <div class="how-inner">
+    <div class="section-label" style="text-align:center">Configuración</div>
+    <div class="section-title" style="text-align:center">Listo en menos de 5 minutos</div>
+    <div class="section-sub" style="text-align:center;margin:0 auto">Sin instalar nada. Solo necesitas una cuenta de Google.</div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Adquiere tu acceso</div>
+          <div class="step-desc">Contáctanos, realiza tu pago único y te enviamos el enlace de acceso a tu correo en menos de 24 horas.</div>
+          <div class="step-tag">Pago único, sin mensualidades</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Abre el enlace con tu cuenta de Google</div>
+          <div class="step-desc">Haz clic en el enlace desde cualquier navegador. Google te pedirá autorizar acceso a Drive, Gmail y Sheets — esto es necesario para que la app funcione.</div>
+          <div class="step-tag">Solo necesitas una cuenta de Gmail</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Completa el asistente de configuración</div>
+          <div class="step-desc">La app te guía paso a paso: nombre de tu negocio → número de WhatsApp → carpeta de Google Drive → logo (opcional). Toma menos de 2 minutos.</div>
+          <div class="step-tag">4 pasos simples</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">¡Tu panel está listo!</div>
+          <div class="step-desc">Empieza a registrar trabajos, clientes y pagos de inmediato. Tu información se guarda automáticamente en tu propio Google Sheets.</div>
+          <div class="step-tag">Tus datos, en tu Google Drive</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div class="pricing-section">
+  <div class="section-label" style="text-align:center">Inversión</div>
+  <div class="section-title" style="text-align:center">Elige el plan<br>que más te convenga</div>
+  <div class="section-sub" style="text-align:center;margin:0 auto">Mismo panel completo, mismas funciones — tú decides cómo pagar.</div>
+
+  <div class="pricing-grid">
+    <!-- PRUEBA -->
+    <div class="pricing-card">
+      <div class="pricing-badge alt">Prueba</div>
+      <div class="pricing-name">Primer mes</div>
+      <div class="pricing-price" style="font-size:28px;line-height:1.3">Consultar</div>
+      <div class="pricing-sub">precio especial de introducción</div>
+      <ul class="pricing-features">
+        <li>Acceso completo al panel</li>
+        <li>Sin compromiso de permanencia</li>
+        <li>Cancela cuando quieras</li>
+        <li>Soporte incluido</li>
+      </ul>
+      <a href="mailto:raulalvaradomendoza@gmail.com?subject=Quiero el mes de prueba de PrintApp" class="btn-secondary" style="width:100%;text-align:center;display:block;padding:14px;color:#fff">Empezar prueba →</a>
+      <div class="pricing-note">Descuento especial el primer mes.</div>
+    </div>
+
+    <!-- MENSUAL -->
+    <div class="pricing-card">
+      <div class="pricing-badge alt">Mensual</div>
+      <div class="pricing-name">Pago mensual</div>
+      <div class="pricing-price" style="font-size:28px;line-height:1.3">Consultar</div>
+      <div class="pricing-sub">cancela cuando quieras · sin contratos</div>
+      <ul class="pricing-features">
+        <li>Panel completo de gestión</li>
+        <li>Control de pagos y cobranza</li>
+        <li>Directorio de clientes</li>
+        <li>Reportes de ventas</li>
+        <li>Sincronización con Drive</li>
+        <li>Envío por WhatsApp y correo</li>
+        <li>Celular y computadora</li>
+      </ul>
+      <a href="mailto:raulalvaradomendoza@gmail.com?subject=Quiero el plan mensual de PrintApp" class="btn-secondary" style="width:100%;text-align:center;display:block;padding:14px;color:#fff">Solicitar acceso →</a>
+      <div class="pricing-note">Licencia por cuenta de Google.</div>
+    </div>
+
+    <!-- ÚNICO -->
+    <div class="pricing-card featured">
+      <div class="pricing-badge">Pago único <span class="save-badge">Recomendado</span></div>
+      <div class="pricing-name">De por vida</div>
+      <div class="pricing-price" style="font-size:28px;line-height:1.3">Consultar</div>
+      <div class="pricing-sub">pago único · sin mensualidades · sin contratos</div>
+      <ul class="pricing-features">
+        <li>Todo lo del plan mensual</li>
+        <li>Acceso de por vida</li>
+        <li>Todas las actualizaciones futuras</li>
+        <li>Tu logo y marca personalizados</li>
+        <li>Tus datos en tu Google Drive</li>
+        <li>Sin sorpresas ni cobros extra</li>
+      </ul>
+      <a href="mailto:raulalvaradomendoza@gmail.com?subject=Quiero el pago único de PrintApp" class="btn-primary" style="width:100%;text-align:center;display:block">Solicitar acceso →</a>
+      <div class="pricing-note">Pagas una vez y es tuyo para siempre.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ACCESO DIRECTO -->
+<div class="section" style="padding-top:0">
+  <div class="section-label">Acceso rápido</div>
+  <div class="section-title">Úsala como app nativa</div>
+  <div class="section-sub">Sin instalar nada desde tiendas. Agrégala a tu escritorio o pantalla de inicio en segundos.</div>
+  <div class="features-grid" style="margin-top:32px">
+
+    <div class="feature-card">
+      <div class="feature-ic">🖥️</div>
+      <div class="feature-title">Windows / Mac — Chrome</div>
+      <div class="feature-desc">
+        1. Abre la app en Chrome<br>
+        2. Clic en los tres puntos (⋮) arriba a la derecha<br>
+        3. <strong>Guardar y compartir → Instalar página como app</strong><br>
+        4. Clic en "Instalar"<br><br>
+        La app aparece en tu escritorio y menú de inicio como cualquier programa.
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-ic">🍎</div>
+      <div class="feature-title">iPhone / iPad — Safari</div>
+      <div class="feature-desc">
+        1. Abre la app en Safari<br>
+        2. Toca el botón de compartir (□↑) en la barra inferior<br>
+        3. Desplázate y toca <strong>"Agregar a pantalla de inicio"</strong><br>
+        4. Ponle el nombre que quieras y toca "Agregar"<br><br>
+        El ícono aparece en tu pantalla de inicio como una app normal.
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-ic">🤖</div>
+      <div class="feature-title">Android — Chrome</div>
+      <div class="feature-desc">
+        1. Abre la app en Chrome<br>
+        2. Toca los tres puntos (⋮) arriba a la derecha<br>
+        3. Toca <strong>"Agregar a pantalla de inicio"</strong><br>
+        4. Confirma tocando "Agregar"<br><br>
+        El ícono aparece en tu pantalla de inicio. También puede aparecer como notificación automática al entrar al sitio.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>¿Listo para ordenar tu negocio?</h2>
+  <p>Escríbenos y te enviamos el acceso. Sin complicaciones, sin contratos.</p>
+  <a href="mailto:raulalvaradomendoza@gmail.com?subject=Quiero acceso a PrintApp" class="btn-white">Contactar ahora</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <strong>PrintApp</strong> — Desarrollado por Nova Print &nbsp;·&nbsp; raulalvaradomendoza@gmail.com
+</footer>
+
+</body>
+</html>
